@@ -300,7 +300,7 @@ class Signup extends Component {
             }
         });
 
-        checkEmailAvailability(emailValue)
+        checkUsernameAvailability(this.state.username.value)
         .then(response => {
             if(response.available) {
                 this.setState({

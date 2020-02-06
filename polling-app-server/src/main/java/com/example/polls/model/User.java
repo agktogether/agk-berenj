@@ -1,9 +1,8 @@
 package com.example.polls.model;
 
 import com.example.polls.model.audit.DateAudit;
-import org.hibernate.annotations.NaturalId;
+
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -16,11 +15,12 @@ import java.util.Set;
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {
-            "username"
-        }),
-        @UniqueConstraint(columnNames = {
-            "email"
+                "username"
         })
+//        ,
+//        @UniqueConstraint(columnNames = {
+//            "email"
+//        })
 })
 public class User extends DateAudit {
     @Id
@@ -31,19 +31,30 @@ public class User extends DateAudit {
     @Size(max = 40)
     private String name;
 
+    /**
+     * username is same phoneNumber
+     */
     @NotBlank
-    @Size(max = 15)
+    @Size(max = 11)
     private String username;
 
-    @NaturalId
-    @NotBlank
-    @Size(max = 40)
-    @Email
-    private String email;
+
+//    @NaturalId
+//    @NotBlank
+//    @Size(max = 40)
+//    @Email
+//    private String email;
 
     @NotBlank
     @Size(max = 100)
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_addresses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private Set<Address> addresses = new HashSet<>();
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
@@ -55,10 +66,9 @@ public class User extends DateAudit {
 
     }
 
-    public User(String name, String username, String email, String password) {
+    public User(String name, String username, String password) {
         this.name = name;
         this.username = username;
-        this.email = email;
         this.password = password;
     }
 
@@ -86,13 +96,6 @@ public class User extends DateAudit {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPassword() {
         return password;
@@ -108,5 +111,12 @@ public class User extends DateAudit {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+    public void setAddresses(Set<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public Set<Address> getAddresses() {
+        return addresses;
     }
 }

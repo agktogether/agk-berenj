@@ -46,17 +46,35 @@ public class UserController {
         Boolean isAvailable = !userRepository.existsByUsername(username);
         return new UserIdentityAvailability(isAvailable);
     }
+//
+//    @GetMapping("/user/checkEmailAvailability")
+//    public UserIdentityAvailability checkEmailAvailability(@RequestParam(value = "email") String email) {
+//        Boolean isAvailable = !userRepository.existsByEmail(email);
+//        return new UserIdentityAvailability(isAvailable);
+//    }
 
-    @GetMapping("/user/checkEmailAvailability")
-    public UserIdentityAvailability checkEmailAvailability(@RequestParam(value = "email") String email) {
-        Boolean isAvailable = !userRepository.existsByEmail(email);
-        return new UserIdentityAvailability(isAvailable);
-    }
+//    @GetMapping("/users/{username}")
+//    @PreAuthorize("hasRole('USER')")
+//    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+//
+//        long pollCount = pollRepository.countByCreatedBy(user.getId());
+//        long voteCount = voteRepository.countByUserId(user.getId());
+//
+//        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getName(), user.getCreatedAt(), pollCount, voteCount);
+//
+//        return userProfile;
+//    }
 
     @GetMapping("/users/{username}")
-    public UserProfile getUserProfile(@PathVariable(value = "username") String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+    @PreAuthorize("hasRole('USER')")
+    public UserProfile getUserProfile(@PathVariable(value = "username") String username, @CurrentUser UserPrincipal currentUser) {
+
+        String username1 = currentUser.getUsername();
+
+        User user = userRepository.findByUsername(username1)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username1));
 
         long pollCount = pollRepository.countByCreatedBy(user.getId());
         long voteCount = voteRepository.countByUserId(user.getId());
@@ -73,7 +91,6 @@ public class UserController {
                                                          @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
         return pollService.getPollsCreatedBy(username, currentUser, page, size);
     }
-
 
     @GetMapping("/users/{username}/votes")
     public PagedResponse<PollResponse> getPollsVotedBy(@PathVariable(value = "username") String username,
