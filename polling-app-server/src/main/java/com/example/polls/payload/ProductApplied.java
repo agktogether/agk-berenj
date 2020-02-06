@@ -1,17 +1,19 @@
-package com.example.polls.model;
+package com.example.polls.payload;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Entity
-@Table(name = "products")
 @Getter
-public class Product {
+@Setter
+public class ProductApplied {
     @Id
     private Long id;
 
@@ -24,6 +26,12 @@ public class Product {
     @NotBlank
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer price;
+
+    @NotBlank
+    @Size(min = 1)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer count;
+
 
 
 }

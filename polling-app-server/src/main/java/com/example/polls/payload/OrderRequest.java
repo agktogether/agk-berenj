@@ -1,5 +1,6 @@
 package com.example.polls.payload;
 
+import com.example.polls.model.Address;
 import com.example.polls.model.Order;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,5 +15,6 @@ public class OrderRequest {
     private Order order;
     private long orderDeliverTime;
     private PersianDate orderDeliverPersianDate;
+    private Address deliveringAddress;
 
 }

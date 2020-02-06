@@ -9,7 +9,7 @@ public class UserCheckout {
     private String name;
     private Set<Address> addresses ;
 
-    public UserCheckout(, String username, String name, Set<Address> addresses) {
+    public UserCheckout(String username, String name, Set<Address> addresses) {
         this.username = username;
         this.name = name;
         this.addresses = addresses;
