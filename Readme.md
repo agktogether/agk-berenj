@@ -2,7 +2,7 @@
  
  Building a Full Stack back end and front in spring and angular
  
- ###God bless us to finish it and over ...
+ ### God bless us to finish it and over ...
  
 ![App Screenshot](screenshot.png)
 
