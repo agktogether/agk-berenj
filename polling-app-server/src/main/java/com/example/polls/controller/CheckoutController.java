@@ -88,8 +88,6 @@ public class CheckoutController {
                 .orElseThrow(() -> new ObjectNotFoundException("order not found for this user"));
 //                .orElseThrow(() -> new AppException("order not found for this user"));
 
-
-
         List<ProductApplied> products = order.getProducts();
 
         AtomicInteger payablePrice = new AtomicInteger(0);
