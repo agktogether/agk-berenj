@@ -23,15 +23,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -139,20 +137,47 @@ public class AuthController {
         int randomPIN = (int) (Math.random() * 9000) + 1000;
         CodeSending codeSending = new CodeSending(username, String.valueOf(randomPIN), CodeSending.NOTSENTYET);
         CodeSending save = codeSendingRepository.save(codeSending);
-        while (!codesended) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Optional<CodeSending> byId = codeSendingRepository.findById(save.getId());
-            CodeSending codeSending1 = byId.get();
-            if (codeSending1.getStatus() == CodeSending.SENT) {
-                return new ResponseEntity(new ApiResponse(false, "sent"),
-                        HttpStatus.OK);
-            }
-        }
-        return null;
+
+//        while (!codesended) {
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            Optional<CodeSending> byId = codeSendingRepository.findById(save.getId());
+//            CodeSending codeSending1 = byId.get();
+//            if (codeSending1.getStatus() == CodeSending.SENT) {
+//                return new ResponseEntity(new ApiResponse(false, "sent"),
+//                        HttpStatus.OK);
+//            }
+//        }
+        return new ResponseEntity<>(save, HttpStatus.OK);
+    }
+
+
+
+    @PostMapping("/getsmsreqs")
+    public ResponseEntity<?> getPhonenumberpart(){
+        List<CodeSending> byStatus = codeSendingRepository.findByStatus(CodeSending.NOTSENTYET);
+        return new ResponseEntity<>(byStatus, HttpStatus.OK);
+    }
+
+
+    //token here is for not recognizable by hackers
+    @PostMapping("/changesmsreqstatus/dslkfasdlfjasdlfjldksjflksdjJSKALSJSLksdksdks/{id}")
+    public ResponseEntity<?> getPhonenumberpart(@PathVariable Long id){
+        Optional<CodeSending> byId = codeSendingRepository.findById(id);
+        CodeSending codeSending = byId.get();
+        codeSending.setStatus(CodeSending.SENT);
+        codeSendingRepository.save(codeSending);
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
+    @PostMapping("/ackstatus/{id}")
+    public ResponseEntity<?> f(@PathVariable Long id){
+        Optional<CodeSending> byId = codeSendingRepository.findById(id);
+        CodeSending codeSending = byId.get();
+        return new ResponseEntity<>(codeSending.getStatus(), HttpStatus.OK);
     }
 
 

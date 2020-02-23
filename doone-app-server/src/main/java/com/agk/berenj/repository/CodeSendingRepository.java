@@ -16,5 +16,5 @@ import java.util.Optional;
  */
 @Repository
 public interface CodeSendingRepository extends JpaRepository<CodeSending, Long> {
-
+    List<CodeSending> findByStatus(int status);
 }
