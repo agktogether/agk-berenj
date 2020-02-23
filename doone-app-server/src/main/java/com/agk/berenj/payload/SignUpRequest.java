@@ -1,5 +1,7 @@
 package com.agk.berenj.payload;
 
+import org.springframework.lang.Nullable;
+
 import javax.validation.constraints.*;
 
 /**
@@ -7,12 +9,12 @@ import javax.validation.constraints.*;
  */
 
 public class SignUpRequest {
-    @NotBlank
-    @Size(min = 4, max = 40)
+    @Nullable
+    @Size(min = 0, max = 40)
     private String name;
 
     @NotBlank
-    @Size(min = 10, max = 11)
+    @Size(min = 11, max = 11)
     private String username;
 
     @NotBlank

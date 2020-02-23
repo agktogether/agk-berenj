@@ -1,5 +1,8 @@
 package com.agk.berenj.controller;
 
+import com.agk.berenj.exception.ExceptionType;
+import com.agk.berenj.model.CodeSending;
+import com.agk.berenj.repository.CodeSendingRepository;
 import com.agk.berenj.repository.RoleRepository;
 import com.agk.berenj.repository.UserRepository;
 import com.agk.berenj.exception.AppException;
@@ -11,6 +14,7 @@ import com.agk.berenj.payload.JwtAuthenticationResponse;
 import com.agk.berenj.payload.LoginRequest;
 import com.agk.berenj.payload.SignUpRequest;
 import com.agk.berenj.security.JwtTokenProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Created by rajeevkumarsingh on 02/08/17.
@@ -36,6 +41,8 @@ import java.util.Collections;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @Autowired
+    CodeSendingRepository codeSendingRepository;
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -67,9 +74,17 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/signupold")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepository.existsByUsername(signUpRequest.getUsername())) {
+        String username = signUpRequest.getUsername();
+        if (!StringUtils.isNumeric(username)) {
+            ApiResponse apiResponse = new ApiResponse(false, "have a string instead of numbers");
+            apiResponse.setErrornumber(ExceptionType.ISNOTNUMERIC);
+            return new ResponseEntity(apiResponse,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        if (userRepository.existsByUsername(username)) {
             return new ResponseEntity(new ApiResponse(false, "phone number is already taken!"),
                     HttpStatus.BAD_REQUEST);
         }
@@ -80,7 +95,7 @@ public class AuthController {
 //        }
 
         // Creating user's account
-        User user = new User(signUpRequest.getName(), signUpRequest.getUsername(), signUpRequest.getPassword());
+        User user = new User(signUpRequest.getName(), username, signUpRequest.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -97,4 +112,48 @@ public class AuthController {
 
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> getPhonenumberpart(@Valid @RequestBody SignUpRequest signUpRequest) {
+        String username = signUpRequest.getUsername();
+        if (!StringUtils.isNumeric(username)) {
+            ApiResponse apiResponse = new ApiResponse(false, "have a string instead of numbers");
+            apiResponse.setErrornumber(ExceptionType.ISNOTNUMERIC);
+            return new ResponseEntity(apiResponse,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        if (userRepository.existsByUsername(username)) {
+            return new ResponseEntity(new ApiResponse(false, "phone number is already taken!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+//
+//        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+//                    HttpStatus.BAD_REQUEST);
+//        }
+
+
+        //sending code to that phone number
+        boolean codesended = false;
+        int randomPIN = (int) (Math.random() * 9000) + 1000;
+        CodeSending codeSending = new CodeSending(username, String.valueOf(randomPIN), CodeSending.NOTSENTYET);
+        CodeSending save = codeSendingRepository.save(codeSending);
+        while (!codesended) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Optional<CodeSending> byId = codeSendingRepository.findById(save.getId());
+            CodeSending codeSending1 = byId.get();
+            if (codeSending1.getStatus() == CodeSending.SENT) {
+                return new ResponseEntity(new ApiResponse(false, "sent"),
+                        HttpStatus.OK);
+            }
+        }
+        return null;
+    }
+
+
 }

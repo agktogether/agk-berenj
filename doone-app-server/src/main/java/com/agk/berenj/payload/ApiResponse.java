@@ -6,6 +6,7 @@ package com.agk.berenj.payload;
 public class ApiResponse {
     private Boolean success;
     private String message;
+    private int errornumber;
 
     public ApiResponse(Boolean success, String message) {
         this.success = success;
@@ -26,5 +27,13 @@ public class ApiResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public int getErrornumber() {
+        return errornumber;
+    }
+
+    public void setErrornumber(int errornumber) {
+        this.errornumber = errornumber;
     }
 }
