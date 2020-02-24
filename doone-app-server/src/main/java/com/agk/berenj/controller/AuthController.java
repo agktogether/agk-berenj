@@ -70,18 +70,17 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-    @PostMapping("/loginbysmstoken")
+    @PostMapping("/dp/verify")
     public ResponseEntity<?> sd(@Valid @RequestBody LoginWithSMSRequest loginWithSMSRequest) {
 
         String usernameOrEmail = loginWithSMSRequest.getPhonenumber();
 
-        Long smsreqid = loginWithSMSRequest.getSmsreqid();
         @NotBlank String code = loginWithSMSRequest.getCode();
 
-        Optional<CodeSending> byId = codeSendingRepository.findById(smsreqid);
+        Optional<CodeSending> byId = codeSendingRepository.findById(usernameOrEmail);
 
         if (!byId.isPresent()) {
-            return new ResponseEntity<>(new ApiResponse(false, "smsreqid not found", ExceptionType.SMSREQIDISNOTFOUND)
+            return new ResponseEntity<>(new ApiResponse(false, "phonenumber not requested at all", ExceptionType.SMSREQIDISNOTFOUND)
                     , HttpStatus.BAD_REQUEST);
         }
 
@@ -108,7 +107,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication);
 
-            codeSendingRepository.deleteById(smsreqid);
+            codeSendingRepository.deleteById(usernameOrEmail);
 
             return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
         } else {
@@ -135,7 +134,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication);
 
-            codeSendingRepository.deleteById(smsreqid);
+            codeSendingRepository.deleteById(usernameOrEmail);
 
             return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 
@@ -181,9 +180,10 @@ public class AuthController {
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> getPhonenumberpart(@Valid @RequestBody SignUpRequest signUpRequest) {
-        String username = signUpRequest.getUsername();
+    //dp is dynamic password
+    @PostMapping("/dp")
+    public ResponseEntity<?> getPhonenumberpart(@Valid @RequestBody OTPRequest otpRequest) {
+        String username = otpRequest.getPhonenumber();
         if (!StringUtils.isNumeric(username)) {
             ApiResponse apiResponse = new ApiResponse(false, "have a string instead of numbers");
             apiResponse.setErrornumber(ExceptionType.ISNOTNUMERIC);
@@ -191,41 +191,15 @@ public class AuthController {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (userRepository.existsByUsername(username)) {
-            return new ResponseEntity(new ApiResponse(false, "phone number is already taken!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-//
-//        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
-
-
         //sending code to that phone number
-        boolean codesended = false;
         int randomPIN = (int) (Math.random() * 9000) + 1000;
         CodeSending codeSending = new CodeSending(username, String.valueOf(randomPIN), CodeSending.NOTSENTYET);
-        CodeSending save = codeSendingRepository.save(codeSending);
-
-//        while (!codesended) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            Optional<CodeSending> byId = codeSendingRepository.findById(save.getId());
-//            CodeSending codeSending1 = byId.get();
-//            if (codeSending1.getStatus() == CodeSending.SENT) {
-//                return new ResponseEntity(new ApiResponse(false, "sent"),
-//                        HttpStatus.OK);
-//            }
-//        }
-        return new ResponseEntity<>(new CodeSendingResponse(save.getId(), save.getPhoneNumber(), save.getStatus()), HttpStatus.OK);
+        codeSendingRepository.save(codeSending);
+        return new ResponseEntity<>(new CodeSendingResponse("ok"), HttpStatus.OK);
     }
 
 
-    @PostMapping("/getsmsreqs")
+    @GetMapping("/getsmsreqs/dslkfasdlfjasdlfjldksjflksdjJSKALSJSLksdksdks")
     public ResponseEntity<?> getPhonenumberpart() {
         List<CodeSending> byStatus = codeSendingRepository.findByStatus(CodeSending.NOTSENTYET);
         return new ResponseEntity<>(byStatus, HttpStatus.OK);
@@ -233,9 +207,9 @@ public class AuthController {
 
 
     //token here is for not recognizable by hackers
-    @PostMapping("/changesmsreqstatus/dslkfasdlfjasdlfjldksjflksdjJSKALSJSLksdksdks/{id}")
-    public ResponseEntity<?> getPhonenumberpart(@PathVariable Long id) {
-        Optional<CodeSending> byId = codeSendingRepository.findById(id);
+    @PostMapping("/changesmsreqstatus/dslkfasdlfjasdlfjldksjflksdjJSKALSJSLksdksdks/{phoneNumber}")
+    public ResponseEntity<?> getPhonenumberpart(@PathVariable String phoneNumber) {
+        Optional<CodeSending> byId = codeSendingRepository.findById(phoneNumber);
         CodeSending codeSending = byId.get();
         codeSending.setStatus(CodeSending.SENT);
         codeSendingRepository.save(codeSending);
@@ -243,7 +217,7 @@ public class AuthController {
     }
 
     @PostMapping("/ackstatus/{id}")
-    public ResponseEntity<?> f(@PathVariable Long id) {
+    public ResponseEntity<?> f(@PathVariable String id) {
         Optional<CodeSending> byId = codeSendingRepository.findById(id);
         CodeSending codeSending = byId.get();
         return new ResponseEntity<>(codeSending.getStatus(), HttpStatus.OK);

@@ -16,9 +16,6 @@ public class CodeSending {
     public static int NOTSENTYET = 0;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String phoneNumber;
     private int status;
     private String code;

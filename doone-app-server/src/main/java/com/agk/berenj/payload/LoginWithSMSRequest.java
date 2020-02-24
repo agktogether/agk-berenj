@@ -11,11 +11,9 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @Getter
 public class LoginWithSMSRequest {
+
     @NotBlank
     private String phonenumber;
-
-    private Long smsreqid;
-
     @NotBlank
     private String code;
 

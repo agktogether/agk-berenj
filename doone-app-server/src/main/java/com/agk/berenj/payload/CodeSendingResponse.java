@@ -8,9 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CodeSendingResponse {
-
-    private Long smsreqid;
-
-    private String phoneNumber;
-    private int status;
+    private String status;
 }

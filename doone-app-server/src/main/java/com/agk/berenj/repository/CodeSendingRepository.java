@@ -15,6 +15,7 @@ import java.util.Optional;
  * Created by rajeevkumarsingh on 20/11/17.
  */
 @Repository
-public interface CodeSendingRepository extends JpaRepository<CodeSending, Long> {
+public interface CodeSendingRepository extends JpaRepository<CodeSending, String> {
     List<CodeSending> findByStatus(int status);
+
 }
