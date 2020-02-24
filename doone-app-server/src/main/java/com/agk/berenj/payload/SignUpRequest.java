@@ -17,7 +17,7 @@ public class SignUpRequest {
     @Size(min = 11, max = 11)
     private String username;
 
-    @NotBlank
+    @Nullable
     @Size(min = 6, max = 20)
     private String password;
 //

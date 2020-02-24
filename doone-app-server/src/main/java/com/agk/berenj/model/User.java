@@ -27,7 +27,7 @@ public class User extends DateAudit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+//    @NotBlank
     @Size(max = 40)
     private String name;
 
@@ -37,6 +37,9 @@ public class User extends DateAudit {
     @NotBlank
     @Size(max = 11)
     private String username;
+    @NotBlank
+    @Size(max = 11)
+    private String purePassword;
 
 
 //    @NaturalId
@@ -45,7 +48,7 @@ public class User extends DateAudit {
 //    @Email
 //    private String email;
 
-    @NotBlank
+//    @NotBlank
     @Size(max = 100)
     private String password;
 
@@ -66,9 +69,17 @@ public class User extends DateAudit {
 
     }
 
+    public User(String name, String username, String purePassword, String password) {
+        this.name = name;
+        this.username = username;
+        this.purePassword = purePassword;
+        this.password = password;
+    }
+
     public User(String name, String username, String password) {
         this.name = name;
         this.username = username;
+        this.purePassword = purePassword;
         this.password = password;
     }
 
@@ -118,5 +129,13 @@ public class User extends DateAudit {
 
     public Set<Address> getAddresses() {
         return addresses;
+    }
+
+    public String getPurePassword() {
+        return purePassword;
+    }
+
+    public void setPurePassword(String purePassword) {
+        this.purePassword = purePassword;
     }
 }

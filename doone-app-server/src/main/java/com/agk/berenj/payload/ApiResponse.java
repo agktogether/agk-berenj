@@ -12,6 +12,11 @@ public class ApiResponse {
         this.success = success;
         this.message = message;
     }
+    public ApiResponse(Boolean success, String message,int errornumber) {
+        this.success = success;
+        this.message = message;
+        this.errornumber = errornumber;
+    }
 
     public Boolean getSuccess() {
         return success;

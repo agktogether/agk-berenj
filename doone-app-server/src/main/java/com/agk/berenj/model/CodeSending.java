@@ -20,8 +20,8 @@ public class CodeSending {
     private Long id;
 
     private String phoneNumber;
-    private String code;
     private int status;
+    private String code;
 
     public CodeSending(String phoneNumber, String code, int status) {
         this.phoneNumber = phoneNumber;
