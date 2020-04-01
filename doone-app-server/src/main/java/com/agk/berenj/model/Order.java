@@ -1,6 +1,8 @@
 package com.agk.berenj.model;
 
+import com.agk.berenj.payload.PersianDate;
 import com.agk.berenj.payload.ProductApplied;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,10 +16,16 @@ import java.util.List;
 public class Order {
 
     @Id
+    @JsonIgnore
     private String _id;
     private Long userId;
     private long orderTime;
     private List<ProductApplied> products;
     private OrderStatus orderStatus;
 
+    private long orderDeliverTime;
+    private PersianDate orderDeliverPersianDate;
+
+    public Order() {
+    }
 }

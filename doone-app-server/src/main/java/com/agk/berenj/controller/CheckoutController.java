@@ -42,13 +42,13 @@ public class CheckoutController {
 
 //        UserInfo userInfo = orderRequest.getUserInfo();
 //        String name = userInfo.getName();
-        Order order = orderRequest.getOrder();
+        ClientsideOrder clientsideOrder = orderRequest.getClientsideOrder();
 
-        Address deliveringAddress = orderRequest.getDeliveringAddress();
+        long deliveringAddressId = orderRequest.getDeliveringAddressId();
         PersianDate orderDeliverPersianDate = orderRequest.getOrderDeliverPersianDate();
         long orderDeliverTime = orderRequest.getOrderDeliverTime();
 
-        List<ProductApplied> products = order.getProducts();
+        List<ProductApplied> products = clientsideOrder.getProducts();
         AtomicInteger payablePrice = new AtomicInteger(0);
         for (ProductApplied product : products) {
             Long id = product.getId();
@@ -60,7 +60,11 @@ public class CheckoutController {
             });
         }
         long issuedFactorTime = System.currentTimeMillis();
+        Order order = new Order();
+
         order.setOrderTime(issuedFactorTime);
+        order.setProducts(clientsideOrder.getProducts());
+
         String alphaNumericString = RandomString.getAlphaNumericString(4);
         while (true) {
             if (!orderIdRepository.existsById(alphaNumericString)) {
@@ -70,6 +74,8 @@ public class CheckoutController {
             alphaNumericString = RandomString.getAlphaNumericString(4);
         }
         order.set_id(alphaNumericString);
+        order.setOrderDeliverPersianDate(orderDeliverPersianDate)
+                .setOrderDeliverTime(orderDeliverTime);
         order.setUserId(currentUser.getId());
         order.setOrderStatus(OrderStatus.NOT_PAID_YET);
         Order save = orderRepository.save(order);
