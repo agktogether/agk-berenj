@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class OrderRequest {
 
-    private UserCheckout userCheckout;
+    private UserInfo userInfo;
     private Order order;
     private long orderDeliverTime;
     private PersianDate orderDeliverPersianDate;

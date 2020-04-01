@@ -1,6 +1,7 @@
 package com.agk.berenj.controller;
 
 import com.agk.berenj.exception.ExceptionType;
+import com.agk.berenj.exception.ResourceNotFoundException;
 import com.agk.berenj.model.CodeSending;
 import com.agk.berenj.payload.*;
 import com.agk.berenj.repository.CodeSendingRepository;
@@ -11,6 +12,8 @@ import com.agk.berenj.model.Role;
 import com.agk.berenj.model.RoleName;
 import com.agk.berenj.model.User;
 import com.agk.berenj.security.JwtTokenProvider;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +37,8 @@ import java.util.Optional;
  * Created by rajeevkumarsingh on 02/08/17.
  */
 @RestController
+
+@Api(value = "/api/auth", description = "Customer Profile", produces = "application/json")
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -54,6 +59,7 @@ public class AuthController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
+    @ApiOperation(value = "Add a product")
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -218,8 +224,9 @@ public class AuthController {
 
     @PostMapping("/ackstatus/{id}")
     public ResponseEntity<?> f(@PathVariable String id) {
-        Optional<CodeSending> byId = codeSendingRepository.findById(id);
-        CodeSending codeSending = byId.get();
+        CodeSending codeSending = codeSendingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ID", "id", id));
+
         return new ResponseEntity<>(codeSending.getStatus(), HttpStatus.OK);
     }
 

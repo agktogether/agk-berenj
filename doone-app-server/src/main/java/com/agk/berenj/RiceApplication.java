@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
@@ -13,6 +14,7 @@ import java.util.TimeZone;
 		RiceApplication.class,
 		Jsr310JpaConverters.class
 })
+@EnableSwagger2
 public class RiceApplication {
 
 	@PostConstruct

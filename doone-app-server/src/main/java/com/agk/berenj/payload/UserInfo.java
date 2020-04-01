@@ -4,12 +4,12 @@ import com.agk.berenj.model.Address;
 
 import java.util.Set;
 
-public class UserCheckout {
+public class UserInfo {
     private String username;
     private String name;
     private Set<Address> addresses ;
 
-    public UserCheckout(String username, String name, Set<Address> addresses) {
+    public UserInfo(String username, String name, Set<Address> addresses) {
         this.username = username;
         this.name = name;
         this.addresses = addresses;

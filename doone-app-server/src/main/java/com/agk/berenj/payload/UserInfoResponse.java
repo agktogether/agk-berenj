@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class CheckoutResponse {
-    private UserCheckout user;
+public class UserInfoResponse {
+    private UserInfo user;
 
 }

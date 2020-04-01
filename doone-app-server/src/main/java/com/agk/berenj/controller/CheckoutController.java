@@ -7,10 +7,10 @@ import com.agk.berenj.repository.UserRepository;
 import com.agk.berenj.repository.mongo.OrderIdRepository;
 import com.agk.berenj.repository.mongo.OrderRepository;
 import com.agk.berenj.exception.ObjectNotFoundException;
-import com.agk.berenj.exception.ResourceNotFoundException;
 
 import com.agk.berenj.security.CurrentUser;
 import com.agk.berenj.security.UserPrincipal;
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,19 +34,14 @@ public class CheckoutController {
     @Autowired
     private OrderIdRepository orderIdRepository;
 
-    @GetMapping
-    private CheckoutResponse d(@CurrentUser UserPrincipal currentUser) {
-        String username = currentUser.getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-        UserCheckout userCheckout = new UserCheckout(username, user.getName(), user.getAddresses());
-        return new CheckoutResponse().setUser(userCheckout);
-    }
 
     @PostMapping
-    private VerifyingOrderResponse verifyingorder(@RequestBody OrderRequest orderRequest, @CurrentUser UserPrincipal currentUser) {
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", example = "Bearer access_token")
+    private VerifyingOrderResponse verifyingorder(@RequestBody OrderRequest orderRequest
+            , @CurrentUser UserPrincipal currentUser) {
 
-        UserCheckout userCheckout = orderRequest.getUserCheckout();
-        String name = userCheckout.getName();
+//        UserInfo userInfo = orderRequest.getUserInfo();
+//        String name = userInfo.getName();
         Order order = orderRequest.getOrder();
 
         Address deliveringAddress = orderRequest.getDeliveringAddress();
@@ -82,6 +77,7 @@ public class CheckoutController {
     }
 
     @PostMapping("/verify")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, paramType = "header", example = "Bearer access_token")
     private Order verifyforpayment(@RequestBody OrderId orderid, @CurrentUser UserPrincipal currentUser) {
 
         Order order = orderRepository.findBy_idAndUserId(orderid.get_id(), currentUser.getId())

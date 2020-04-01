@@ -84,6 +84,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/**/*.html",
                         "/**/*.css",
+                        "/swagger-resources/**/**",
+                        "webjars/**",
+                        "webjars/**/**",
+                        "webjars/**/**/*.*",
+                        "/webjars/springfox-swagger-ui/fonts/*.ttf",
+
+                        "/v2/api-docs",
                         "/**/*.js")
                         .permitAll()
                     .antMatchers("/api/auth/**")
