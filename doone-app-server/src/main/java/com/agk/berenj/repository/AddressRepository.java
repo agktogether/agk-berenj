@@ -14,4 +14,5 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
+    boolean existsByLatAndLng(boolean lat, boolean lng);
 }
