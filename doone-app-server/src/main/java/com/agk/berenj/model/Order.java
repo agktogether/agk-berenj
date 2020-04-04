@@ -23,8 +23,9 @@ public class Order {
     private List<ProductApplied> products;
     private OrderStatus orderStatus;
 
-    private long orderDeliverTime;
+    private long orderDeliverUnixTime;
     private PersianDate orderDeliverPersianDate;
+    private int paymentType;
 
     public Order() {
     }

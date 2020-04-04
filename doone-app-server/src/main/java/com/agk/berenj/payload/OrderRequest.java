@@ -17,5 +17,8 @@ public class OrderRequest {
     private long orderDeliverTime;
     private PersianDate orderDeliverPersianDate;
     private long deliveringAddressId;
+    private String couponCode;
+    private int paymentType=0;
+
 
 }

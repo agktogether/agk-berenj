@@ -61,7 +61,7 @@ public class CheckoutController {
         }
         long issuedFactorTime = System.currentTimeMillis();
         Order order = new Order();
-
+        order.setPaymentType(orderRequest.getPaymentType());
         order.setOrderTime(issuedFactorTime);
         order.setProducts(clientsideOrder.getProducts());
 
@@ -75,7 +75,7 @@ public class CheckoutController {
         }
         order.set_id(alphaNumericString);
         order.setOrderDeliverPersianDate(orderDeliverPersianDate)
-                .setOrderDeliverTime(orderDeliverTime);
+                .setOrderDeliverUnixTime(orderDeliverTime);
         order.setUserId(currentUser.getId());
         order.setOrderStatus(OrderStatus.NOT_PAID_YET);
         Order save = orderRepository.save(order);
